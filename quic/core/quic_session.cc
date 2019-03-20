@@ -4,6 +4,7 @@
 
 #include "net/third_party/quic/core/quic_session.h"
 
+#include <iostream>
 #include <cstdint>
 #include <utility>
 
@@ -476,6 +477,7 @@ QuicConsumedData QuicSession::WritevData(QuicStream* stream,
       connection_->SendStreamData(id, write_length, offset, state);
   if (offset >= stream->stream_bytes_written()) {
     // This is new stream data.
+    // Experiments show every time enter here -Jiachen
     write_blocked_streams_.UpdateBytesForStream(id, data.bytes_consumed);
   }
   return data;

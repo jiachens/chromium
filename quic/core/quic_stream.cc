@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #include "net/third_party/quic/core/quic_stream.h"
-
+#include <iostream>
 #include "net/third_party/quic/core/quic_flow_controller.h"
 #include "net/third_party/quic/core/quic_session.h"
 #include "net/third_party/quic/platform/api/quic_bug_tracker.h"
@@ -46,7 +46,7 @@ size_t GetReceivedFlowControlWindow(QuicSession* session) {
 
 // static
 const SpdyPriority QuicStream::kDefaultPriority;
-int i = 1;
+
 
 QuicStream::QuicStream(QuicStreamId id,
                        QuicSession* session,
@@ -777,6 +777,8 @@ void QuicStream::WriteBufferedData() {
 
   // How much data flow control permits to be written.
   QuicByteCount send_window = flow_controller_.SendWindowSize();
+  std::cout << "stream level flow control window: " << send_window << std::endl;
+  std::cout << "connection level flow control window: " << connection_flow_controller_->SendWindowSize() << std::endl;
   if (stream_contributes_to_connection_flow_control_) {
     send_window =
         std::min(send_window, connection_flow_controller_->SendWindowSize());
@@ -796,6 +798,9 @@ void QuicStream::WriteBufferedData() {
     write_length = static_cast<size_t>(send_window);
     QUIC_DVLOG(1) << "stream " << id() << " shortens write length to "
                   << write_length << " due to flow control";
+
+    std::cout << "stream " << id() << " shortens write length to "
+              << write_length << " due to flow control" << std::endl;
   }
   if (session_->session_decides_what_to_write()) {
     session_->SetTransmissionType(NOT_RETRANSMISSION);
@@ -811,6 +816,12 @@ void QuicStream::WriteBufferedData() {
                 << " and has buffered data " << BufferedDataBytes() << " bytes."
                 << " fin is sent: " << consumed_data.fin_consumed
                 << " fin is buffered: " << fin_buffered_;
+
+  std::cout << ENDPOINT << "stream " << id_ << " sends "
+              << consumed_data.bytes_consumed << " bytes "
+              << " and has buffered data " << BufferedDataBytes() << " bytes."
+              << " fin is sent: " << consumed_data.fin_consumed
+              << " fin is buffered: " << fin_buffered_ << std::endl;
 
   // The write may have generated a write error causing this stream to be
   // closed. If so, simply return without marking the stream write blocked.

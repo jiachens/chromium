@@ -116,7 +116,7 @@ class QUIC_EXPORT_PRIVATE QuicWriteBlockedList {
                             spdy::SpdyPriority new_priority) {
     DCHECK(!static_stream_collection_.IsRegistered(stream_id));
     priority_write_scheduler_.UpdateStreamPrecedence(
-        stream_id, spdy::SpdyStreamPrecedence(1, 123, false));
+        stream_id, spdy::SpdyStreamPrecedence(new_priority));
   }
 
   void UpdateBytesForStream(QuicStreamId stream_id, size_t bytes) {

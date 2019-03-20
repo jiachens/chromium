@@ -4,6 +4,7 @@
 
 #include "net/third_party/quic/core/quic_packet_generator.h"
 
+#include <iostream>
 #include <cstdint>
 
 #include "net/third_party/quic/core/crypto/quic_random.h"
@@ -102,6 +103,7 @@ QuicConsumedData QuicPacketGenerator::ConsumeData(QuicStreamId id,
 
     // A stream frame is created and added.
     size_t bytes_consumed = frame.stream_frame.data_length;
+    
     total_bytes_consumed += bytes_consumed;
     fin_consumed = fin && total_bytes_consumed == write_length;
     if (fin_consumed && state == FIN_AND_PADDING) {
@@ -125,6 +127,7 @@ QuicConsumedData QuicPacketGenerator::ConsumeData(QuicStreamId id,
   }
 
   if (run_fast_path) {
+    // every time return this -Jiachen
     return ConsumeDataFastPath(id, write_length, offset, state != NO_FIN,
                                total_bytes_consumed);
   }
@@ -157,6 +160,7 @@ QuicConsumedData QuicPacketGenerator::ConsumeDataFastPath(
     total_bytes_consumed += bytes_consumed;
   }
 
+  std::cout << "quic_packet_generator total_bytes_consumed: " << total_bytes_consumed << std::endl;
   return QuicConsumedData(total_bytes_consumed,
                           fin && (total_bytes_consumed == write_length));
 }
